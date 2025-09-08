@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #1a1a1a;
+  color: #e5e5e5;
+  overflow: hidden;
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-container {
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+  background: #1a1a1a;
+  padding: 40px;
+}
+
+#wysiwyg-editor {
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e5e5e5;
+  background: #1a1a1a;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+#wysiwyg-editor::-webkit-scrollbar {
+  width: 8px;
+}
+
+#wysiwyg-editor::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+#wysiwyg-editor::-webkit-scrollbar-thumb {
+  background: #404040;
+  border-radius: 4px;
+}
+
+#wysiwyg-editor::-webkit-scrollbar-thumb:hover {
+  background: #505050;
+}
+
+#wysiwyg-editor.empty::before {
+  content: attr(data-placeholder);
+  color: #666;
+  font-weight: 300;
+  pointer-events: none;
+  position: absolute;
+}
+
+#wysiwyg-editor h1 {
+  font-size: 2em;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: #ffffff;
+}
+
+#wysiwyg-editor h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 32px 0 16px 0;
+  color: #ffffff;
+}
+
+#wysiwyg-editor h3 {
+  font-size: 1.25em;
+  font-weight: 500;
+  margin: 24px 0 12px 0;
+  color: #ffffff;
+}
+
+#wysiwyg-editor h4,
+#wysiwyg-editor h5,
+#wysiwyg-editor h6 {
+  font-size: 1.1em;
+  font-weight: 500;
+  margin: 20px 0 8px 0;
+  color: #ffffff;
+}
+
+#wysiwyg-editor p {
+  margin: 0 0 16px 0;
+  color: #e5e5e5;
+}
+
+#wysiwyg-editor blockquote {
+  border-left: 4px solid #404040;
+  margin: 16px 0;
+  padding: 0 0 0 20px;
+  color: #b3b3b3;
+  font-style: italic;
+}
+
+#wysiwyg-editor ul,
+#wysiwyg-editor ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+#wysiwyg-editor li {
+  margin: 4px 0;
+  color: #e5e5e5;
+}
+
+#wysiwyg-editor code {
+  background: #2a2a2a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  font-size: 14px;
+  color: #e5e5e5;
+}
+
+#wysiwyg-editor pre {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+#wysiwyg-editor pre code {
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+#wysiwyg-editor table {
+  border-collapse: collapse;
+  margin: 16px 0;
+  width: 100%;
+}
+
+#wysiwyg-editor th,
+#wysiwyg-editor td {
+  border: 1px solid #404040;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+#wysiwyg-editor th {
+  background: #2a2a2a;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+#wysiwyg-editor td {
+  background: #1a1a1a;
+}
+
+#wysiwyg-editor a {
+  color: #4A9EFF;
+  text-decoration: none;
+}
+
+#wysiwyg-editor a:hover {
+  text-decoration: underline;
+}
+
+#wysiwyg-editor hr {
+  border: none;
+  height: 1px;
+  background: #404040;
+  margin: 32px 0;
+}
+
+#wysiwyg-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin: 16px 0;
+}
+
+.hljs {
+  background: #2a2a2a !important;
+  color: #e5e5e5 !important;
+}
