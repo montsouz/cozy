@@ -35,7 +35,7 @@ export class DatabaseService {
         content TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
+      );
     `;
 
     try {
@@ -56,7 +56,7 @@ export class DatabaseService {
     // In a more sophisticated app, you might want to update the latest record
     const insertSQL = `
       INSERT INTO documents (content, updated_at) 
-      VALUES (?, CURRENT_TIMESTAMP)
+      VALUES (?, CURRENT_TIMESTAMP);
     `;
 
     try {
@@ -77,7 +77,7 @@ export class DatabaseService {
     const selectSQL = `
       SELECT content FROM documents 
       ORDER BY updated_at DESC 
-      LIMIT 1
+      LIMIT 1;
     `;
 
     try {
