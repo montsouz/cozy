@@ -6,8 +6,8 @@ export class WysiwygEditor {
   private editor: HTMLElement;
   private turndown: TurndownService;
   private debounceTimer: NodeJS.Timeout | null = null;
-  private lastContent: string = "";
-  private isProcessing: boolean = false;
+  private lastContent = "";
+  private isProcessing = false;
 
   constructor() {
     this.editor = document.getElementById("wysiwyg-editor") as HTMLElement;
@@ -20,6 +20,84 @@ export class WysiwygEditor {
     this.setupMarked();
     this.setupEventListeners();
     this.showPlaceholder();
+    this.loadContent(); // Load content from database on startup
+  }
+
+  private async loadContent(): Promise<void> {
+    try {
+      // Wait for database to be ready
+      await this.waitForDatabase();
+
+      const result = await (window as any).database.loadContent();
+      if (result.success && result.content) {
+        this.setMarkdown(result.content);
+        this.lastContent = result.content.trim();
+        console.log("Content loaded from database");
+      } else {
+        // Show welcome text if no saved content
+        const welcomeText = `# Welcome to Cozy
+
+This editor formats markdown instantly as you type, just like Notion!
+
+## Try These Live Formatting Tricks:
+
+**Type # followed by space** - Creates a heading
+**Type - followed by space** - Creates a bullet list  
+**Type > followed by space** - Creates a blockquote
+**Type \`code\`** - Creates inline code
+**Type \*\*bold\*\*** - Creates **bold text**
+**Type \*italic\*** - Creates *italic text*
+
+## Example Text
+
+You can edit everything directly. Try typing:
+
+\`console.log("Hello World")\` 
+
+> This is a blockquote - edit me!
+
+- This is a list item
+- This is another item
+
+## More Features
+
+- **Real-time formatting**: No need to switch between edit/preview
+- **Dark theme**: Beautiful on the eyes  
+- **Clean interface**: Distraction-free writing
+
+---
+
+**Go ahead - clear this text and start writing your own!**
+
+Try typing: "# My New Document" followed by space...`;
+
+        this.setMarkdown(welcomeText);
+        console.log("No saved content found, showing welcome text");
+      }
+    } catch (error) {
+      console.error("Error loading content:", error);
+    }
+  }
+
+  private async waitForDatabase(): Promise<void> {
+    const maxAttempts = 50; // Wait up to 5 seconds
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      try {
+        const readyCheck = await (window as any).database.isReady();
+        if (readyCheck.ready) {
+          return;
+        }
+      } catch (error) {
+        // Database API might not be available yet, continue waiting
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      attempts++;
+    }
+
+    throw new Error("Database did not become ready within timeout");
   }
 
   private setupMarked(): void {
@@ -107,7 +185,6 @@ export class WysiwygEditor {
       // Check for heading patterns (requires space after # and some text)
       const headingMatch = beforeCursor.match(/^(#{1,6})\s+(.+)$/);
       if (headingMatch) {
-        console.log("headingMatch", headingMatch);
         const level = headingMatch[1].length;
         const text = headingMatch[2];
         this.replaceWithHeading(container as Text, level, text, afterCursor);
@@ -179,7 +256,6 @@ export class WysiwygEditor {
     text: string,
     afterText: string
   ): void {
-    console.log("replaceWithHeading", textNode, level, text, afterText);
     this.isProcessing = true;
 
     const heading = document.createElement(`h${level}`);
@@ -187,7 +263,6 @@ export class WysiwygEditor {
 
     const parent = textNode.parentNode;
     if (parent) {
-      console.log("parent", parent);
       parent.insertBefore(heading, textNode);
 
       if (afterText.trim()) {
@@ -417,9 +492,30 @@ export class WysiwygEditor {
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
     }
-    this.debounceTimer = setTimeout(() => {
-      // Auto-save functionality could be added here
-    }, 500);
+    this.debounceTimer = setTimeout(async () => {
+      // Auto-save to SQLite
+      const content = this.getMarkdown();
+      if (content && content.trim() !== this.lastContent) {
+        try {
+          // Check if database is ready before saving
+          const readyCheck = await (window as any).database.isReady();
+          if (!readyCheck.ready) {
+            console.log("Database not ready yet, skipping save");
+            return;
+          }
+
+          const result = await (window as any).database.saveContent(content);
+          if (result.success) {
+            this.lastContent = content.trim();
+            console.log("Content auto-saved to database");
+          } else {
+            console.error("Failed to save content:", result.error);
+          }
+        } catch (error) {
+          console.error("Error saving content:", error);
+        }
+      }
+    }, 1000); // Increased debounce time to 1 second for database saves
   }
 
   private handleKeydown(e: KeyboardEvent): void {
